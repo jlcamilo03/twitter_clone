@@ -1,29 +1,44 @@
 {% extends 'twitter/layout.html' %}
 {% block content %}
+{% load humanize %}
 <div id="main" class="container-fluid d-flex">
     <!-- Barra Izquierda -->
     <div class="sidebar m-5 d-none d-md-block">
         <div class="">
             <div class="card " style="width: 18rem; text-align:center;border-radius: 20px;">
                 <img class="card-img-top rounded-circle"
-                    style="width:60%; position: relative;left: 62px;padding-top: 20px;" src="../../static/img/tony.jpg"
+                    style="width:60%; position: relative;left: 62px;padding-top: 20px;" src="{{ user.profile.img.url}}"
                     alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title font-weight-bold">Tony</h5>
-                    <h6 class="card-title font-weight-bold">@Tony</h6>
+                    <h5 class="card-title font-weight-bold">{{user.first_name}}</h5>
+                    <h6 class="card-title font-weight-bold">@{{user}}</h6>
 
 
-                    <p class="card-text">Tony</p>
+                    <p class="card-text">{{user.profile.bio}}</p>
                     <h6 class="card-title font-weight-bold">
-                        100 Followers
-                        100 Following
+                        {{ user.profile.followers.count}} Followers
+                        {{ user.profile.following.count}} Following
                     </h6>
+                    {% if request.user.is_authenticated%}
+                        {% if user.username != request.user.username %}
+                            {% if user not in request.user.profile.following%}
+                            <a href="{% url 'follow' user %}" class="btn  text-white rounded-pill">Follow</a>
+                            {% else %}
+                            <a href="{% url 'unfollow' user %}" class="btn  text-white rounded-pill">unFollow</a>
+                            {% endif%}
+
+
+                        {%endif%}
+                    {% endif%}
+                   
                 </div>
 
-            </div>
-            <a href="#" id="addATweetLeft" type="button"
+            </div> 
+            {% if request.user == user %}
+            <a href="{% url 'editar'%}" id="addATweetLeft" type="button"
                 style="border-radius: 30px; font-size: 1.1rem; font-weight:bold;"
                 class="btn btn-lg btn-block mt-4 text-white ">Editar mi perfil</a>
+            {% endif%}
         </div>
     </div>
     <!-- End Barra Izquierda -->
@@ -33,15 +48,16 @@
 
 
         <!-- Tweets -->
+        {% for post in posts %}
         <div id="tweetCards">
             <!-- FOR LOOP HERE -->
             <div class="tweet-wrap" style="border-radius:20px">
                 <div class="tweet-header">
-                    <img src="../../static/img/tony.jpg" alt="" class="avator">
+                    <img src="{{ post.user.profile.img.url}}" alt="" class="avator">
                     <div class="tweet-header-info">
-                        Tony <span>@Tony</span><span>3 hours
+                        {{ post.user.first_name }}</a> <span>@{{post.user}}</span><span>. {{post.timestamp|naturaltime}}
                         </span>
-                        <p>test</p>
+                        <p>{{post.content}} </p>
                     </div>
                 </div>
                 <div class="tweet-info-counts">
@@ -99,6 +115,7 @@
             <!-- FOR LOOP HERE -->
 
         </div>
+        {% endfor %}
         <!-- EndTweets -->
 
 

@@ -11,13 +11,19 @@
         </header>
 
         <form method="post">
+            {% csrf_token %}
             <div class="input-wrapper">
                 <label for="user-name-id">Username</label>
+                {{ form.username }}
             </div>
 
             <div class="input-wrapper">
                 <label for="password-id">Password</label>
+                {{ form.password }}
             </div>
+            {% if form.errors %}
+            <p>USER OR PASSWORD NOT CORRECT </p>
+            {% endif %}
 
             <button class="twitter-btn">Log in</button>
         </form>
